@@ -9,16 +9,18 @@ import alice.util.OneWayList;
 
 public class DefaultClauseStore implements ClauseStore
 {
+	private Prolog engine;
 	private OneWayList clauses;
 	private Term goal;
 	private List vars;
 	private boolean haveAlternatives;
 	
 	
-	private DefaultClauseStore(Term goal, List vars) 
+	private DefaultClauseStore(Prolog engine, Term goal, List vars) 
 	{
 		this.goal = goal;
 		this.vars = vars;
+		this.engine = engine;
 		clauses = null;
 	}
 
@@ -86,7 +88,7 @@ public class DefaultClauseStore implements ClauseStore
 		ClauseInfo clause = null;
 		do {
 			clause = (ClauseInfo) clauses.getHead();
-			if (goal.match(clause.getHead())) return true;
+			if (goal.match(engine, clause.getHead())) return true;
 			clauses = clauses.getTail();
 		} while (clauses != null);
 		return false;
@@ -96,8 +98,8 @@ public class DefaultClauseStore implements ClauseStore
 	 * Carica una famiglia di clausole
 	 * @param familyClauses
 	 */
-	public static ClauseStore build(Term goal, List vars, List familyClauses) {
-		DefaultClauseStore clauseStore = new DefaultClauseStore(goal, vars);
+	public static ClauseStore build(Prolog engine, Term goal, List vars, List familyClauses) {
+		DefaultClauseStore clauseStore = new DefaultClauseStore(engine, goal, vars);
 		clauseStore.clauses = OneWayList.transform(familyClauses);
 		if (clauseStore.clauses == null || !clauseStore.hasCompatibleClause())
 			return null;

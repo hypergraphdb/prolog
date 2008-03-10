@@ -4,8 +4,10 @@ import java.util.AbstractMap;
 import java.util.List;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.HGUtils;
 
+import alice.tuprolog.Prolog;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Var;
@@ -16,18 +18,18 @@ public class HGAtomTerm extends Term
 {
 	private static final long serialVersionUID = -1;
 	
-	private HyperGraphClauseStore store;
+	private HyperGraph graph;
 	private HGHandle handle;
 	
-	public HGAtomTerm(HyperGraphClauseStore store, HGHandle handle)
+	public HGAtomTerm(HGHandle handle, HyperGraph graph)
 	{
-		this.store = store;
 		this.handle = handle;
+		this.graph = graph;
 	}
 	
 	public String toString()
 	{
-		return "hgatom(" + store.getGraph().getPersistentHandle(handle) + ")";
+		return "hgatom(" + graph.getPersistentHandle(handle) + ")";
 	}
 	
 	public HGHandle getHandle()
@@ -37,11 +39,11 @@ public class HGAtomTerm extends Term
 	
 	public Object deref()
 	{
-		return store.getGraph().get(handle);
+		return graph.get(handle);
 	}
 	
 	@Override
-	public boolean isEqual(Term t)
+	public boolean isEqual(Prolog mediator, Term t)
 	{
 		t = t.getTerm();
 		if (t instanceof HGAtomTerm)
@@ -49,16 +51,16 @@ public class HGAtomTerm extends Term
 		else if (t instanceof Struct)
 		{
 			JavaLibrary jl = (JavaLibrary)
-				store.getProlog().getLibraryManager().getLibrary("alice.tuprolog.lib.JavaLibrary");
+				mediator.getLibraryManager().getLibrary("alice.tuprolog.lib.JavaLibrary");
 			Struct s = (Struct)t;
 			if (!s.isGround()) // until we start storing prolog term in HGDB, only ground Struct can be handled
 				return false;
 			Object other = null;
 			try
 			{
-				other = jl.getRegisteredObject((Struct)t);
+				other = jl.getRegisteredDynamicObject((Struct)t);
 				if (other == null)
-					other = jl.getRegisteredDynamicObject((Struct)t);
+					other = jl.getRegisteredObject((Struct)t);
 				Object x = deref();
 				if (other != null)
 					return HGUtils.eq(other, x);
@@ -84,11 +86,11 @@ public class HGAtomTerm extends Term
 	}
 	
 	@Override
-	public boolean unify(List varsUnifiedArg1, List varsUnifiedArg2, Term t)
+	public boolean unify(Prolog mediator, List varsUnifiedArg1, List varsUnifiedArg2, Term t)
 	{
 		if (t instanceof Var)
-			t.unify(varsUnifiedArg1, varsUnifiedArg2, this);
-		return isEqual(t);
+			t.unify(mediator, varsUnifiedArg1, varsUnifiedArg2, this);
+		return isEqual(mediator, t);
 	}
 	
 	@Override
@@ -146,7 +148,7 @@ public class HGAtomTerm extends Term
 	}
 
 	@Override
-	public boolean isGreater(Term t)
+	public boolean isGreater(Prolog mediator, Term t)
 	{
 		return false;
 	}

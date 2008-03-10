@@ -7,6 +7,7 @@ import java.util.List;
 
 import alice.tuprolog.ClauseInfo;
 import alice.tuprolog.ClauseStore;
+import alice.tuprolog.Prolog;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Var;
@@ -20,6 +21,7 @@ public class CollectionItemsStore implements ClauseStore
 	private Iterator iter;
 	private Term current;
 	private JavaLibrary lib;
+	private Prolog engine;
 	
 	void nextCompatible()
 	{
@@ -29,20 +31,21 @@ public class CollectionItemsStore implements ClauseStore
 			current = lib.registerDynamic(iter.next());
 			List v1 = new ArrayList();
 			List v2 = new ArrayList();
-			if (!item.unify(v1, v2, current))				
+			if (!item.unify(engine, v1, v2, current))				
 				current = null;
 			Var.free(v1);
 			Var.free(v2);
 		}
 	}
 	
-	public CollectionItemsStore(Collection C, Term item, List varList, JavaLibrary lib)
+	public CollectionItemsStore(Prolog engine, Collection C, Term item, List varList, JavaLibrary lib)
 	{
 		iter = C.iterator();
 		this.lib = lib;
 		this.item = item;
 		this.varList = varList;
 		this.collection = lib.registerDynamic(C);
+		this.engine = engine;		
 		nextCompatible();
 	}
 	

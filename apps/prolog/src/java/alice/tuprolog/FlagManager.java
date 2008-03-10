@@ -56,17 +56,11 @@ class FlagManager {
 		java.util.Iterator it = flags.iterator();
 		while (it.hasNext()) {
 			Flag flag = (Flag) it.next();
-			if (flag.getName().equals(name)) {
-				if (flag.isModifiable() && flag.isValidValue(value)) {
-					flag.setValue(value);
-					return true;
-				} else {
-					return false;
-				}
-			}
+			if (flag.getName().equals(name))
+				return flag.setValue(mediator, value);
 		}
 		return false;
-	}    
+	}
 	
 	public Struct getPrologFlagList() {
 		Struct flist = new Struct();

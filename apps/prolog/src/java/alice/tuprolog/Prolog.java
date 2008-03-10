@@ -455,7 +455,7 @@ public class Prolog implements java.io.Serializable {
 	 * @return true if the unification was successful
 	 */
 	public synchronized boolean match(Term t0, Term t1) {
-		return t0.match(t1);
+		return t0.match(this, t1);
 	}
 	
 	/**

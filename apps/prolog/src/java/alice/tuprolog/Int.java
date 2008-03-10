@@ -129,7 +129,7 @@ public class Int extends Number {
 	 * Returns true if this integer term is grater that the term provided.
 	 * For number term argument, the int value is considered.
 	 */
-	public boolean isGreater(Term t) {
+	public boolean isGreater(Prolog mediator, Term t) {
 		t = t.getTerm();
 		if (t instanceof Number) {
 			return value>((Number)t).intValue();
@@ -145,7 +145,7 @@ public class Int extends Number {
 	/**
 	 * Returns true if this integer term is equal to the term provided.
 	 */
-	public boolean isEqual(Term t) {
+	public boolean isEqual(Prolog mediator, Term t) {
 		t = t.getTerm();
 		if (t instanceof Number) {
 			Number n = (Number) t;
@@ -160,10 +160,10 @@ public class Int extends Number {
 	 * Tries to unify a term with the provided term argument.
 	 * This service is to be used in demonstration context.
 	 */
-	public boolean unify(List vl1, List vl2, Term t) {
+	public boolean unify(Prolog mediator, List vl1, List vl2, Term t) {
 		t = t.getTerm();
 		if (t instanceof Var){
-			return t.unify(vl2, vl1, this);
+			return t.unify(mediator, vl2, vl1, this);
 		} else if (t instanceof Number) {
 			return value == ( (Number) t ).intValue();
 		} else {

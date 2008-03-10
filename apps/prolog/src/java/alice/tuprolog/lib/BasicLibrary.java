@@ -312,19 +312,19 @@ public class BasicLibrary extends Library {
 	public boolean term_equality_2(Term arg0, Term arg1) {
 		arg0 = arg0.getTerm();
 		arg1 = arg1.getTerm();
-		return arg0.isEqual(arg1);
+		return arg0.isEqual(engine, arg1);
 	}
 	
 	public boolean term_greater_than_2(Term arg0, Term arg1) {
 		arg0 = arg0.getTerm();
 		arg1 = arg1.getTerm();
-		return arg0.isGreater(arg1);
+		return arg0.isGreater(engine, arg1);
 	}
 	
 	public boolean term_less_than_2(Term arg0, Term arg1) {
 		arg0 = arg0.getTerm();
 		arg1 = arg1.getTerm();
-		return !(arg0.isGreater(arg1) || arg0.isEqual(arg1));
+		return !(arg0.isGreater(engine, arg1) || arg0.isEqual(engine, arg1));
 	}
 	
 	

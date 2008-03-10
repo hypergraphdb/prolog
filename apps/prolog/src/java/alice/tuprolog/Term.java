@@ -87,19 +87,21 @@ public abstract class Term implements java.io.Serializable {
 	 *
 	 */
 	public boolean equals(Object t) {
-		return isEqual((Term)t);
+		return isEqual(null, (Term)t);
 	}
 	
 	
 	/**
 	 * is term greater than term t?
+	 * @param mediator TODO
 	 */
-	public abstract boolean isGreater(Term t);
+	public abstract boolean isGreater(Prolog mediator, Term t);
 	
 	/**
 	 * Tests if this term is (logically) equal to another
+	 * @param mediator TODO
 	 */
-	public abstract boolean isEqual(Term t);
+	public abstract boolean isEqual(Prolog mediator, Term t);
 	
 	/**
 	 * Gets the actual term referred by this Term.
@@ -190,7 +192,7 @@ public abstract class Term implements java.io.Serializable {
 		t1.resolveTerm();
 		List v1 = new ArrayList();
 		List v2 = new ArrayList();
-		boolean ok = unify(v1,v2,t1);
+		boolean ok = unify(mediator,v1,v2, t1);
 		if (ok) {
 			ExecutionContext ec = engine.getCurrentContext();
 			if (ec != null) {
@@ -219,16 +221,16 @@ public abstract class Term implements java.io.Serializable {
 	 * No unification is done.
 	 *
 	 * The test is done outside any demonstration context
+	 * @param mediator TODO
 	 * @param t the term to checked
-	 *
 	 * @return true if the term is unifiable with this one
 	 */
-	public boolean match(Term t) {
+	public boolean match(Prolog mediator, Term t) {
 		resolveTerm();
 		t.resolveTerm();
 		List v1 = new ArrayList();
 		List v2 = new ArrayList();
-		boolean ok = unify(v1,v2,t);
+		boolean ok = unify(mediator,v1,v2, t);
 		Var.free(v1);
 		Var.free(v2);
 		return ok;
@@ -240,10 +242,11 @@ public abstract class Term implements java.io.Serializable {
 	 * identified by the mark integer.
 	 *
 	 * Try the unification among the term and the term specified
+	 * @param mediator TODO
 	 * @param varsUnifiedArg1 Vars unified in myself
 	 * @param varsUnifiedArg2 Vars unified in term t
 	 */
-	public abstract boolean unify(List varsUnifiedArg1, List varsUnifiedArg2, Term t);
+	public abstract boolean unify(Prolog mediator, List varsUnifiedArg1, List varsUnifiedArg2, Term t);
 	
 	
 	/**

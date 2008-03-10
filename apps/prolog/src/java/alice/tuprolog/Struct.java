@@ -352,7 +352,7 @@ public class Struct extends Term {
 	/**
 	 * Test if a term is greater than other
 	 */
-	public boolean isGreater(Term t) {
+	public boolean isGreater(Prolog mediator, Term t) {
 		t = t.getTerm();
 		if (!(t instanceof Struct)) {
 			return true;
@@ -366,9 +366,9 @@ public class Struct extends Term {
 					return true;
 				} else if (name.compareTo(ts.name) == 0) {
 					for (int c = 0;c < arity;c++) {
-						if (arg[c].isGreater(ts.arg[c])) {
+						if (arg[c].isGreater(mediator, ts.arg[c])) {
 							return true;
-						} else if (!arg[c].isEqual(ts.arg[c])) {
+						} else if (!arg[c].isEqual(mediator, ts.arg[c])) {
 							return false;
 						}
 					}
@@ -382,13 +382,13 @@ public class Struct extends Term {
 	/**
 	 * Test if a term is equal to other
 	 */
-	public boolean isEqual(Term t) {
+	public boolean isEqual(Prolog mediator, Term t) {
 		t = t.getTerm();
 		if (t instanceof Struct) {
 			Struct ts = (Struct) t;
 			if (arity == ts.arity && name.equals(ts.name)) {
 				for (int c = 0;c < arity;c++) {
-					if (!arg[c].isEqual(ts.arg[c])) {
+					if (!arg[c].isEqual(mediator, ts.arg[c])) {
 						return false;
 					}
 				}
@@ -642,21 +642,21 @@ public class Struct extends Term {
 	 * @param vl2 list of variables unified
 	 * @return true if the term is unifiable with this one
 	 */
-	public boolean unify(List vl1,List vl2,Term t) {
+	public boolean unify(Prolog mediator,List vl1,List vl2, Term t) {
 		// In fase di unificazione bisogna annotare tutte le variabili della struct completa.
 		t = t.getTerm();
 		if (t instanceof Struct) {
 			Struct ts = (Struct) t;
 			if ( arity == ts.arity && name.equals(ts.name)) {
 				for (int c = 0;c < arity;c++) {
-					if (!arg[c].unify(vl1,vl2,ts.arg[c])) {
+					if (!arg[c].unify(mediator,vl1,vl2, ts.arg[c])) {
 						return false;
 					}
 				}
 				return true;
 			}
 		} else if (t instanceof Var) {
-			return t.unify(vl2, vl1, this);
+			return t.unify(mediator, vl2, vl1, this);
 		}
 		return false;
 	}

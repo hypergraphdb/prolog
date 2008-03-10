@@ -409,7 +409,7 @@ public class Var extends Term {
 	 * or p(X,X)=p(Y,f(Y)) ); if occur check is ok
 	 * then it's success and a new link is created (retractable by a code)
 	 */
-	public boolean unify(List vl1, List vl2, Term t) 
+	public boolean unify(Prolog mediator, List vl1, List vl2, Term t) 
 	{
 		Term tt = getTerm();
 		if(tt == this) 
@@ -440,7 +440,7 @@ public class Var extends Term {
 			//System.out.println("VAR "+name+" BOUND to "+link+" - time: "+time+" - mark: "+mark);
 			return true;
 		} else {
-			return (tt.unify(vl1, vl2, t));
+			return (tt.unify(mediator, vl1, vl2, t));
 		}
 	}
 	
@@ -459,7 +459,7 @@ public class Var extends Term {
 	 }
 	 */
 	
-	public boolean isGreater(Term t) {
+	public boolean isGreater(Prolog mediator, Term t) {
 		Term tt = getTerm();
 		if (tt == this) {
 			t = t.getTerm();
@@ -467,17 +467,17 @@ public class Var extends Term {
 			return timestamp > ((Var)t).timestamp;
 		}
 		else {
-			return tt.isGreater(t);
+			return tt.isGreater(mediator, t);
 		}
 	}
 	
-	public boolean isEqual(Term t) {
+	public boolean isEqual(Prolog mediator, Term t) {
 		Term tt = getTerm();
 		if(tt == this) {
 			t = t.getTerm();
 			return (t instanceof Var && timestamp == ((Var)t).timestamp);
 		} else {
-			return tt.isEqual(t);
+			return tt.isEqual(mediator, t);
 		}
 	}
 	

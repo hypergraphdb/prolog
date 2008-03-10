@@ -105,7 +105,7 @@ public class TheoryManager implements Serializable {
             return null;
         for (Iterator it = family.iterator(); it.hasNext();) {
             ClauseInfo d = (ClauseInfo) it.next();
-            if (clause.match(d.getClause())) {
+            if (clause.match(engine, d.getClause())) {
                 it.remove();
                 engine.spy("DELETE: " + d.getClause() + "\n");
                 return new DefaultClauseInfo(d.getClause(), null);

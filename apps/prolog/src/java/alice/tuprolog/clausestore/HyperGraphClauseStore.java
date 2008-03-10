@@ -81,6 +81,6 @@ public class HyperGraphClauseStore implements ClauseStore
 	
 	public Term toTerm(HGHandle h)
 	{
-		return new HGAtomTerm(this, h);
+		return new HGAtomTerm(h, graph);
 	}
 }

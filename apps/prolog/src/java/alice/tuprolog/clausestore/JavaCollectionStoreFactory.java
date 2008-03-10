@@ -24,7 +24,11 @@ public class JavaCollectionStoreFactory implements ClauseStoreFactory
 					Term collectionTerm = s.getArg(0).getTerm();
 					Object obj = jl.getRegisteredDynamicObject((Struct)collectionTerm);
 					if (obj instanceof java.util.Collection)
-						return new CollectionItemsStore((java.util.Collection<?>)obj, s.getArg(1), varList, jl);					
+						return new CollectionItemsStore(prolog, 
+													    (java.util.Collection<?>)obj, 
+													    s.getArg(1), 
+													    varList, 
+													    jl);				
 				}
 				catch (Exception ex) { throw new RuntimeException(ex); }
 			}

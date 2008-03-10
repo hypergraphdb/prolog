@@ -1,0 +1,74 @@
+package alice.tuprolog.hgdb;
+
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.app.management.HGApplication;
+import org.hypergraphdb.type.HGAtomType;
+import org.hypergraphdb.type.TypeUtils;
+
+import alice.tuprolog.Struct;
+import alice.tuprolog.Var;
+
+public class PrologHGDBApp extends HGApplication
+{
+
+	private void undefineTypes(HyperGraph graph)
+	{
+		TypeUtils.deleteInstances(graph, PrologLongType.HANDLE);
+		graph.remove(PrologLongType.HANDLE);
+		TypeUtils.deleteInstances(graph, PrologIntType.HANDLE);
+		graph.remove(PrologIntType.HANDLE);
+		TypeUtils.deleteInstances(graph, PrologFloatType.HANDLE);
+		graph.remove(PrologFloatType.HANDLE);
+		TypeUtils.deleteInstances(graph, PrologDoubleType.HANDLE);
+		graph.remove(PrologDoubleType.HANDLE);
+		TypeUtils.deleteInstances(graph, VarType.HANDLE);
+		graph.remove(VarType.HANDLE);
+		TypeUtils.deleteInstances(graph, StructType.HANDLE);
+		graph.remove(StructType.HANDLE);		
+	}
+	
+	private void defineTypes(HyperGraph graph)
+	{
+		HGAtomType t = new StructType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(StructType.HANDLE, t, Struct.class);
+		t = new VarType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(VarType.HANDLE, t, Var.class);
+		t = new PrologLongType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(PrologLongType.HANDLE, t, alice.tuprolog.Long.class);
+		t = new PrologIntType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(PrologIntType.HANDLE, t, alice.tuprolog.Int.class);
+		t = new PrologFloatType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(PrologFloatType.HANDLE, t, alice.tuprolog.Float.class);
+		t = new PrologDoubleType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(PrologDoubleType.HANDLE, t, alice.tuprolog.Double.class);	
+		
+	}
+	
+	public void install(HyperGraph graph)
+	{
+		defineTypes(graph);
+	}
+
+	public void reset(HyperGraph graph)
+	{
+		uninstall(graph);
+		install(graph);
+	}
+
+	public void uninstall(HyperGraph graph)
+	{
+		undefineTypes(graph);
+	}
+
+	public void update(HyperGraph graph)
+	{
+		// TODO Auto-generated method stub
+
+	}
+}

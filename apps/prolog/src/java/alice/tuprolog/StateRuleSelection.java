@@ -108,7 +108,7 @@ public class StateRuleSelection extends State {
 			
 		Struct curGoal = curCtx.currentGoal;
 		List unifiedVars = (List)e.currentContext.trailingVars.getHead();
-		curGoal.unify(unifiedVars,unifiedVars,ec.headClause);
+		curGoal.unify(e.manager.getMediator(),unifiedVars,unifiedVars, ec.headClause);
 		
 		ec.haveAlternatives = clauseStore.haveAlternatives();
 		

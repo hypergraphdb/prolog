@@ -138,6 +138,8 @@ public class EngineManager implements java.io.Serializable {
 	
 	public Engine getEngine() { return env; }
 	
+	public Prolog getMediator() { return mediator; }
+	
 	/**
 	 * Gets next solution
 	 *

@@ -20,6 +20,6 @@ public class ClauseStoreManager implements ClauseStoreFactory
 			if (result != null)
 				return result;
 		}
-		return DefaultClauseStore.build(goal, varList, prolog.getTheoryManager().find(goal));
+		return DefaultClauseStore.build(prolog, goal, varList, prolog.getTheoryManager().find(goal));
 	}
 }
