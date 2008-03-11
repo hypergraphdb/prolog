@@ -13,6 +13,8 @@ public class PrologHGDBApp extends HGApplication
 
 	private void undefineTypes(HyperGraph graph)
 	{
+		TypeUtils.deleteInstances(graph, AtomTermType.HANDLE);
+		graph.remove(AtomTermType.HANDLE);				
 		TypeUtils.deleteInstances(graph, PrologLongType.HANDLE);
 		graph.remove(PrologLongType.HANDLE);
 		TypeUtils.deleteInstances(graph, PrologIntType.HANDLE);
@@ -47,7 +49,9 @@ public class PrologHGDBApp extends HGApplication
 		t = new PrologDoubleType();
 		t.setHyperGraph(graph);
 		graph.getTypeSystem().addPredefinedType(PrologDoubleType.HANDLE, t, alice.tuprolog.Double.class);	
-		
+		t = new AtomTermType();
+		t.setHyperGraph(graph);
+		graph.getTypeSystem().addPredefinedType(AtomTermType.HANDLE, t, alice.tuprolog.clausestore.HGAtomTerm.class);			
 	}
 	
 	public void install(HyperGraph graph)

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.atom.HGAtomRef;
 import org.hypergraphdb.util.HGUtils;
 
 import alice.tuprolog.Prolog;
@@ -19,27 +20,33 @@ public class HGAtomTerm extends Term
 	private static final long serialVersionUID = -1;
 	
 	private HyperGraph graph;
-	private HGHandle handle;
+	private HGAtomRef ref;
+	
+	public HGAtomTerm(HGAtomRef ref, HyperGraph graph)
+	{
+		this.ref = ref;
+		this.graph = graph;
+	}
 	
 	public HGAtomTerm(HGHandle handle, HyperGraph graph)
 	{
-		this.handle = handle;
+		this.ref = new HGAtomRef(handle, HGAtomRef.Mode.symbolic);
 		this.graph = graph;
 	}
 	
 	public String toString()
 	{
-		return "hgatom(" + graph.getPersistentHandle(handle) + ")";
-	}
+		return "hgatom(" + graph.getPersistentHandle(getHandle()) + ")";
+	}	
 	
 	public HGHandle getHandle()
 	{
-		return handle;
+		return ref.getReferent();
 	}
 	
 	public Object deref()
 	{
-		return graph.get(handle);
+		return graph.get(ref.getReferent());
 	}
 	
 	@Override
@@ -47,7 +54,7 @@ public class HGAtomTerm extends Term
 	{
 		t = t.getTerm();
 		if (t instanceof HGAtomTerm)
-			return handle.equals(((HGAtomTerm)t).getHandle());
+			return getHandle().equals(((HGAtomTerm)t).getHandle());
 		else if (t instanceof Struct)
 		{
 			JavaLibrary jl = (JavaLibrary)
