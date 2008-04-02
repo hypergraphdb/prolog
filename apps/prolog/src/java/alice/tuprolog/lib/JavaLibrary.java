@@ -1195,7 +1195,7 @@ public class JavaLibrary extends Library {
 	 * 
 	 * Term id can be a variable or a ground term.
 	 */
-	protected boolean bindDynamicObject(Term id, Object obj) {
+	public boolean bindDynamicObject(Term id, Object obj) {
 		// null object are considered to _ variable
 		if (obj == null) {
 			return unify(id, new Var());

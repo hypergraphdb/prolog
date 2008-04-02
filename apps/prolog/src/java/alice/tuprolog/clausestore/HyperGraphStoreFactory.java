@@ -83,6 +83,11 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 		this.graph = graph;
 	}
 	
+	public HyperGraph getGraph()
+	{
+		return graph;
+	}
+	
 	public Map<String, HGQueryCondition> getPredicateMapping()
 	{
 		return map;

@@ -75,4 +75,9 @@ public class PrologHGDBApp extends HGApplication
 		// TODO Auto-generated method stub
 
 	}
+	
+	public PrologHGDBApp()
+	{
+		setName("tuPrologApp");
+	}
 }

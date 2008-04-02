@@ -26,7 +26,10 @@ import java.util.List;
  * Struct class represents both compound prolog term
  * and atom term (considered as 0-arity compound).
  */
-public class Struct extends Term {
+public class Struct extends Term 
+{
+
+	public static final Struct EMPTY_LIST = new Struct("[]");
 	
 	/** name of the structure */
 	private String name;
