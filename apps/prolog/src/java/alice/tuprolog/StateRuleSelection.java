@@ -56,7 +56,7 @@ public class StateRuleSelection extends State {
 			List varsList = new ArrayList();
 			e.currentContext.trailingVars = new OneWayList(varsList,e.currentContext.trailingVars);
 			clauseStore = c.buildClauseStore(goal, varsList); 
-			if (clauseStore == null){
+			if (clauseStore == null || !clauseStore.hasCompatibleClause()){
 				e.nextState = c.BACKTRACK;
 				return;
 			}

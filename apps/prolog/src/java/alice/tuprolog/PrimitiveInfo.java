@@ -114,8 +114,9 @@ public class PrimitiveInfo {
 		}
 		try {
 			return ((Boolean)method.invoke(source,primitive_args)).booleanValue();
-		} catch (InvocationTargetException e) {
+		} catch (Throwable e) {
 			// throw new Exception(e.getCause());
+			System.err.println("Failed to evaluate predicate: " + g);
 			throw e.getCause();
 		}
 	}
@@ -131,6 +132,7 @@ public class PrimitiveInfo {
 			}
 			return ((Term)method.invoke(source,primitive_args));
 		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
 			return null;
 		}
 	}

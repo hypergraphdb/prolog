@@ -78,7 +78,7 @@ public class HGPrologLibrary extends Library
 			if (x instanceof HGHandle)
 				return hg.incident((HGHandle)x);
 			else
-				throw new IllegalArgumentException("argument of incident must be a handle " + condition); 
+				throw new IllegalArgumentException("argument of incident must be a handle " + x); 
 		}
 		else if (ind.equals("target/1"))
 		{
@@ -86,7 +86,7 @@ public class HGPrologLibrary extends Library
 			if (x instanceof HGHandle)
 				return hg.target((HGHandle)x);
 			else
-				throw new IllegalArgumentException("argument of incident must be a handle " + condition); 
+				throw new IllegalArgumentException("argument of incident must be a handle " + x); 
 		}
 		else if (s.getName().equals("and"))
 		{
@@ -102,6 +102,36 @@ public class HGPrologLibrary extends Library
 				params[i] = termToCond(s.getArg(i));
 			return hg.or(params);
 		}
+		else if (s.getName().equals("link"))
+		{
+			HGHandle [] params = new HGHandle[s.getArity()];
+			for (int i = 0; i < params.length; i++)
+			{
+				Object x = termToHGThing(s.getArg(0));
+				if (x instanceof HGHandle)				
+					params[i] = (HGHandle)x;
+				else
+					params[i] = clauseFactory.getGraph().getHandle(x);
+				if (params[i] == null)
+					throw new IllegalArgumentException("argument of link must be a handle " + x);
+			}
+			return hg.link(params);
+		}
+		else if (s.getName().equals("orderedLink"))
+		{
+			HGHandle [] params = new HGHandle[s.getArity()];
+			for (int i = 0; i < params.length; i++)
+			{
+				Object x = termToHGThing(s.getArg(0));
+				if (x instanceof HGHandle)				
+					params[i] = (HGHandle)x;
+				else
+					params[i] = clauseFactory.getGraph().getHandle(x);
+				if (params[i] == null)
+					throw new IllegalArgumentException("argument of link must be a handle " + x);
+			}
+			return hg.orderedLink(params);
+		}		
 		else
 			throw new IllegalArgumentException("unsupported condition functor:" + s.getName());
 	}
@@ -115,6 +145,7 @@ public class HGPrologLibrary extends Library
 			lib.clauseFactory = new HyperGraphStoreFactory(graph);
 			try { prolog.getLibraryManager().loadLibrary(lib); }
 			catch (Throwable t) { throw new RuntimeException(t); }
+			prolog.getEngineManager().getClauseStoreManager().getFactories().add(lib.clauseFactory);
 		}
 		return lib;
 	}
@@ -202,7 +233,7 @@ public class HGPrologLibrary extends Library
 		}
 	}
 	
-	public Term hg_find_all(Term condition)
+	public Term hg_find_all_1(Term condition)
 	{		
 		try
 		{
@@ -210,7 +241,7 @@ public class HGPrologLibrary extends Library
 		}
 		catch (Throwable ex)
 		{
-			throw new RuntimeException("hg_find_all called with a term that does not represent a proper condition: " + ex.toString());			
+			throw new RuntimeException("hg_find_all called with a term that does not represent a proper condition: " + ex.toString(), ex);			
 		}
 	}
 	

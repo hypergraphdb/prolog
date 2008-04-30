@@ -8,6 +8,7 @@ import org.hypergraphdb.HyperGraph;
 import alice.tuprolog.ClauseInfo;
 import alice.tuprolog.ClauseStore;
 import alice.tuprolog.Prolog;
+import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 
 public class HyperGraphClauseStore implements ClauseStore
@@ -63,9 +64,22 @@ public class HyperGraphClauseStore implements ClauseStore
 			return null;
 		else
 		{
-			// for now, assume the result set returns handles to links.
-			HGLink l = graph.get((HGHandle)rs.next());
-			return new HGAtomClauseInfo(this, l);
+			Object curr = rs.next();
+			// A bit of an ad hoc decision: if the arity is > 1, we expect the atom
+			// to be a link we use it as the predicate
+			// and create a Struct with its target set as arguments. Otherwise, we
+			// use the atom itself (be it a link or not) as the sole argument value
+			// of the predicate Struct.
+			if (arity > 1)
+			{
+				HGLink l = (HGLink)
+					(curr instanceof HGHandle ? graph.get((HGHandle)curr) : curr);
+				return new HGAtomClauseInfo(this, l);
+			}
+			else
+			{ 
+				return new FactClauseInfo(new Struct(predicateName, toTerm((HGHandle)curr)));
+			}
 		}
 	}
 

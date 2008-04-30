@@ -9,10 +9,10 @@ public class HGAtomClauseInfo extends FactClauseInfo
 {
 	private HGLink atom;
 	private HyperGraphClauseStore store;
-	private Struct clause;
 	
 	public HGAtomClauseInfo(HyperGraphClauseStore store, HGLink atom)
 	{
+		super(null);
 		this.atom = atom;
 		this.store = store;
 	}

@@ -374,6 +374,10 @@ public class JavaLibrary extends Library {
 						ex.printStackTrace();
 						return false;
 					}
+					catch (Throwable t)
+					{
+						t.printStackTrace();
+					}
 				} else {
 					getEngine().warn("Method not found: " + methodName+ "( signature: " + args + " )");
 					return false;
@@ -810,7 +814,11 @@ public class JavaLibrary extends Library {
 				} else {
 					Object obj = currentObjects.get(alice.util.Tools.removeApices(tc.toString()));
 					if (obj == null) {
-						values[i] = alice.util.Tools.removeApices(tc.toString());
+				// Boris: decided it makes more sense to pass the actual Structs, better intefacing
+				// b/w prolog and Java. What use could a java method have for the string repr. of a Struct?
+				// If we want the string, it should be handle through the 'as' operator
+						values[i] = tc;
+//						values[i] = alice.util.Tools.removeApices(tc.toString());
 					} else {
 						values[i] = obj;
 					}
@@ -988,6 +996,8 @@ public class JavaLibrary extends Library {
 				return unify(id, new Struct((String) obj));
 			} else if (Character.class.isInstance(obj)) {
 				return unify(id, new Struct(((Character) obj).toString()));
+			} else if (Term.class.isInstance(obj)) {
+				return unify(id, (Term)obj);
 			} else {
 				return bindDynamicObject(id, obj);
 			}

@@ -61,7 +61,7 @@ public abstract class Automaton implements Runnable, java.io.Serializable {
             try {
                 if (!state.equals("end")){
                     if (arguments==null){
-                        this.getClass().getDeclaredMethod(state,null).invoke(this,null);
+                        this.getClass().getDeclaredMethod(state,(Class<?>[])null).invoke(this,(Object[])null);
                     } else {
                         this.getClass().getDeclaredMethod(state,argType).invoke(this,arguments);
                     }

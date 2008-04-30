@@ -171,7 +171,10 @@ public class TheoryManager implements Serializable {
 				assertZ(d, dynamicTheory, libName, true);
 		}
 		
-		String error = ((TermIterator)it).getParserError();
+		String error = null;
+		
+		if (it instanceof TermIterator)
+			error = ((TermIterator)it).getParserError();
 		if (error != null && error.length() > 0)
 			throw new RuntimeException(error);
 		if (libName == null)
@@ -223,16 +226,48 @@ public class TheoryManager implements Serializable {
         return false;
     }
 
+    private Term cloneTermForAssert(Term t)
+    {
+    	if (t instanceof Struct)
+    	{    		
+    		Struct s = (Struct)t;
+    		Struct r = new Struct(s.getName(), s.getArity());
+    		for (int i = 0; i < s.getArity(); i++)
+    		{
+    			r.setArg(i, cloneTermForAssert(s.getArg(i)));
+    		}
+    		return r;
+    	}
+    	else if (t instanceof Var)
+    	{
+    		Var v = (Var)t;
+    		if (v.isBound())
+    			return cloneTermForAssert(v.getTerm());
+    		else
+    		{
+	    		try { return new Var(((Var)t).getName()); }
+	    		catch (Throwable ex) { throw new RuntimeException(ex); }
+    		}
+    	}
+    	else // the others are all immutable and don't contain any interesting state
+    		return t;
+    }
+    
     /**
      * Gets a clause from a generic Term
      */
     private Struct toClause(Struct t) {
-        try {
-            // TODO bad, slow way of cloning. requires approx twice the time necessary
-            t = (Struct) Term.createTerm(t.toString(), this.engine.getOperatorManager());
-        } catch (InvalidTermException e) {
+//        try {
+            t = (Struct)cloneTermForAssert(t); 
+            t.resolveTerm();
+            // TODO bad, slow way of cloning. requires approx twice the time necessary            
+//            Struct other = (Struct) Term.createTerm(t.toString(), this.engine.getOperatorManager());
+//            if (other.getName().indexOf("wordSense") > -1)
+//            	System.out.println("parsed wordsnese");
+//            t = other;
+//        } catch (InvalidTermException e) {
         	// this should never happen
-        }
+//        } 
         if (!t.isClause())
             t = new Struct(":-", t, new Struct("true"));
         primitiveManager.identifyPredicate(t);

@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import alice.tuprolog.clausestore.HGAtomTerm;
+
 /**
  * Struct class represents both compound prolog term
  * and atom term (considered as 0-arity compound).
@@ -197,7 +199,7 @@ public class Struct extends Term
 		arg = new Term[arity];
 	}
 	
-	private Struct(String name_,int arity_) {
+	public Struct(String name_,int arity_) {
 		name = name_;
 		arity = arity_;
 		if (arity > 0) {
@@ -658,7 +660,7 @@ public class Struct extends Term
 				}
 				return true;
 			}
-		} else if (t instanceof Var) {
+		} else if (t instanceof Var || t instanceof HGAtomTerm) {
 			return t.unify(mediator, vl2, vl1, this);
 		}
 		return false;

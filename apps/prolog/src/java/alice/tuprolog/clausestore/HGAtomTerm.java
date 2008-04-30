@@ -36,7 +36,7 @@ public class HGAtomTerm extends Term
 	
 	public String toString()
 	{
-		return "hgatom(" + graph.getPersistentHandle(getHandle()) + ")";
+		return "hgatom('" + graph.getPersistentHandle(getHandle()) + "')";
 	}	
 	
 	public HGHandle getHandle()
@@ -68,8 +68,10 @@ public class HGAtomTerm extends Term
 				other = jl.getRegisteredDynamicObject((Struct)t);
 				if (other == null)
 					other = jl.getRegisteredObject((Struct)t);
+				if (other instanceof HGHandle)
+					return ((HGHandle)other).equals(this.ref.getReferent());
 				Object x = deref();
-				if (other != null)
+				if (other != null)				
 					return HGUtils.eq(other, x);
 				else if (x instanceof String)
 					return x.equals(alice.util.Tools.removeApices(s.toString()));
@@ -95,9 +97,11 @@ public class HGAtomTerm extends Term
 	@Override
 	public boolean unify(Prolog mediator, List varsUnifiedArg1, List varsUnifiedArg2, Term t)
 	{
+		t = t.getTerm();
 		if (t instanceof Var)
-			t.unify(mediator, varsUnifiedArg1, varsUnifiedArg2, this);
-		return isEqual(mediator, t);
+			return t.unify(mediator, varsUnifiedArg1, varsUnifiedArg2, this);
+		else
+			return isEqual(mediator, t);
 	}
 	
 	@Override

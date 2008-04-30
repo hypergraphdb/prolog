@@ -4,9 +4,20 @@ import alice.tuprolog.ClauseInfo;
 import alice.tuprolog.Struct;
 import alice.tuprolog.SubGoalTree;
 
-public abstract class FactClauseInfo implements ClauseInfo
+public class FactClauseInfo implements ClauseInfo
 {
 	private static final SubGoalTree empty_body = new SubGoalTree();
+	protected Struct clause;
+	
+	public FactClauseInfo(Struct clause)
+	{
+		this.clause = clause;
+	}
+	
+	public Struct getClause()
+	{
+		return clause;
+	}
 	
 	public SubGoalTree getBody()
 	{

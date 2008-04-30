@@ -34,18 +34,25 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 		{
 			Struct s = (Struct)t;
 			if (!s.isGround()) return null;
+			Object x = null;
 			try
 			{
-				Object x;
 				if (s.getName().startsWith(jl.getDynamicObjectIdPrefix()))
 					x = jl.getRegisteredDynamicObject(s);
 				else
 					x = jl.getRegisteredObject(s);
-				if (x != null)
-					h = graph.getHandle(x);
 			}
 			catch (Throwable ex)
 			{
+			}
+				
+			if (x instanceof HGHandle)
+				h = (HGHandle)x;
+			else if (x != null)
+			{
+				h = graph.getHandle(x);
+				if (h == null)
+					throw new RuntimeException("Expected an atom for " + t + " in HyperGraph query.");
 			}
 		}
 		return h;
