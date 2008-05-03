@@ -63,6 +63,25 @@ public class Theory implements Serializable {
 	}
 
 	/**
+	 * <p>Convert the theory from textual to a parsed form. If it is already in a parsed form
+	 * (i.e. consisting of a clause list) then this instance itself is return, otherwise
+	 * a new <code>Theory</code> is created out of the list of parsed clauses.
+	 * </p>
+	 * 
+	 * @param engine
+	 * @return
+	 */
+	public Theory getParsed(Prolog engine)
+	{
+		if (!isTextual()) return this;
+		Struct s = new Struct();
+		for (Iterator<?> i = iterator(engine); i.hasNext(); )
+			s = new Struct((Term)i.next(), s);
+		try { return new Theory(s); }
+		catch (InvalidTheoryException ex) { throw new RuntimeException(ex); }
+	}
+	
+	/**
 	 * Creates a theory from a clause list
 	 *
 	 * @param clauseList the source text

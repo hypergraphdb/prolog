@@ -38,6 +38,7 @@ import alice.tuprolog.Number;
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
 import alice.tuprolog.Var;
+import alice.tuprolog.clausestore.HGAtomTerm;
 
 /**
  *
@@ -131,7 +132,7 @@ public class JavaLibrary extends Library {
 		Iterator it = staticObjects_inverse.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry en = (Map.Entry) it.next();
-			bindDynamicObject((Struct) en.getValue(), en.getKey());
+			bindObject((Struct) en.getValue(), en.getKey(), true);
 		}
 		preregisterObjects();
 	}
@@ -145,10 +146,10 @@ public class JavaLibrary extends Library {
 	 */
 	protected void preregisterObjects() {
 		try {
-			bindDynamicObject(new Struct("stdout"), System.out);
-			bindDynamicObject(new Struct("stderr"), System.err);
-			bindDynamicObject(new Struct("runtime"), Runtime.getRuntime());
-			bindDynamicObject(new Struct("current_thread"), Thread.currentThread());
+			bindObject(new Struct("stdout"), System.out, true);
+			bindObject(new Struct("stderr"), System.err, true);
+			bindObject(new Struct("runtime"), Runtime.getRuntime(), true);
+			bindObject(new Struct("current_thread"), Thread.currentThread(), true);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -168,13 +169,20 @@ public class JavaLibrary extends Library {
 	
 	//----------------------------------------------------------------------------
 	
+	public boolean java_staticobject_3(Term className, Term argl, Term id) {
+		return bindObject(id.getTerm(), createJavaObject(className, argl), false);		
+	}
+	
+	public boolean java_object_3(Term className, Term argl, Term id) {
+		return bindObject(id.getTerm(), createJavaObject(className, argl), true);
+	}
+	
 	/**
 	 * Creates of a java object - not backtrackable case
 	 */
-	public boolean java_object_3(Term className, Term argl, Term id) {
+	public Object createJavaObject(Term className, Term argl) {
 		className = className.getTerm();
-		Struct arg = (Struct) argl.getTerm();
-		id = id.getTerm();
+		Struct arg = (Struct) argl.getTerm();		
 		try {
 			if (!className.isAtom()) {
 				return false;
@@ -184,7 +192,7 @@ public class JavaLibrary extends Library {
 			if (clName.endsWith("[]")) {
 				Object[] list = getArrayFromList(arg);
 				int nargs = ((Number) list[0]).intValue();
-				return java_array(clName, nargs, id);
+				return make_java_array(clName, nargs);
 			}
 			Signature args = parseArg(getArrayFromList(arg));
 			if (args == null) {
@@ -202,10 +210,8 @@ public class JavaLibrary extends Library {
 				if (co==null){
 					getEngine().warn("Constructor not found: class " + clName);
 					return false;
-				}
-				
-				Object obj = co.newInstance(args_value);
-				return bindDynamicObject(id, obj);
+				}				
+				return co.newInstance(args_value);
 			} catch (ClassNotFoundException ex) {
 				getEngine().warn("Java class not found: " + clName);
 				return false;
@@ -302,7 +308,7 @@ public class JavaLibrary extends Library {
 			}
 			try {
 				Class the_class = Class.forName(fullClassName, true, new ClassLoader());
-				return bindDynamicObject(id, the_class);
+				return bindObject(id, the_class, true);
 			} catch (ClassNotFoundException ex) {
 				getEngine().warn("Compilation of java sources failed");
 				getEngine().warn("(Java Class compiled, but not created: " + fullClassName + " )");
@@ -556,7 +562,7 @@ public class JavaLibrary extends Library {
 			} else {
 				// the field value is an object
 				Object res = field.get(obj);
-				return bindDynamicObject(what, res);
+				return bindObject(what, res, true);
 			}
 			//} catch (ClassNotFoundException ex){
 			//    getEngine().warn("object of unknown class "+objId);
@@ -715,7 +721,7 @@ public class JavaLibrary extends Library {
 	}
 	
 	
-	private boolean java_array(String type, int nargs, Term id) {
+	private Object make_java_array(String type, int nargs) {
 		try {
 			Object array = null;
 			String obtype = type.substring(0, type.length() - 2);
@@ -739,10 +745,9 @@ public class JavaLibrary extends Library {
 				Class cl = Class.forName(obtype);
 				array = Array.newInstance(cl, nargs);
 			}
-			return bindDynamicObject(id, array);
+			return array; 
 		} catch (Exception ex) {
-			//ex.printStackTrace();
-			return false;
+			throw new RuntimeException(ex);
 		}
 	}
 	
@@ -827,7 +832,12 @@ public class JavaLibrary extends Library {
 			} else if (term instanceof Var && !((Var) term).isBound()) {
 				values[i] = null;
 				types[i] = Object.class;
-			} else {
+			} 
+			else if (term instanceof HGAtomTerm) {
+				values[i] = ((HGAtomTerm)term).getHandle();
+				types[i] = values[i].getClass();
+			}
+			else {
 				return false;
 			}
 		} catch (Exception ex) {
@@ -999,7 +1009,7 @@ public class JavaLibrary extends Library {
 			} else if (Term.class.isInstance(obj)) {
 				return unify(id, (Term)obj);
 			} else {
-				return bindDynamicObject(id, obj);
+				return bindObject(id, obj, true);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -1205,7 +1215,7 @@ public class JavaLibrary extends Library {
 	 * 
 	 * Term id can be a variable or a ground term.
 	 */
-	public boolean bindDynamicObject(Term id, Object obj) {
+	public boolean bindObject(Term id, Object obj, boolean dynamic) {
 		// null object are considered to _ variable
 		if (obj == null) {
 			return unify(id, new Var());
@@ -1224,15 +1234,21 @@ public class JavaLibrary extends Library {
 					// get a ground term
 					Struct idTerm = generateFreshId();
 					unify(id, idTerm);
-					registerDynamic(idTerm, obj);
+					if (dynamic)
+						registerDynamic(idTerm, obj);
+					else
+						try { register(idTerm, obj); } catch (Exception ex) { throw new RuntimeException(ex); } 
 					//log("not ground id for a new obj: "+id+" as ref for "+obj);
 					return true;
 				} else {
 					// verify of the id is already used
 					String raw_name = alice.util.Tools.removeApices(id.getTerm().toString());
-					Object linkedobj = currentObjects.get(raw_name);
+					Object linkedobj = dynamic ? currentObjects.get(raw_name) : staticObjects.get(raw_name);
 					if (linkedobj == null) {
-						registerDynamic((Struct)(id.getTerm()), obj);
+						if (dynamic)
+							registerDynamic((Struct)(id.getTerm()), obj);
+						else
+							try { register((Struct)(id.getTerm()), obj); } catch (Exception ex) { throw new RuntimeException(ex); }
 						//log("ground id for a new obj: "+id+" as ref for "+obj);
 						return true;
 					} else {
@@ -1408,7 +1424,33 @@ public class JavaLibrary extends Library {
 		return false;
 	}
 	
+	private static Class<?> primitiveWrapper(Class<?> c)
+	{
+		if (int.class.equals(c))
+			return Integer.class;
+		else if (double.class.equals(c))
+			return Double.class;
+		else if (long.class.equals(c))
+			return Long.class;
+		else if (char.class.equals(c))
+			return Character.class;
+		else if (boolean.class.equals(c))
+			return Boolean.class;
+		else if (short.class.equals(c))
+			return Short.class;
+		else if (float.class.equals(c))
+			return Float.class;
+		else if (byte.class.equals(c))
+			return Byte.class;
+		else 
+			return c;
+	}
+	
 	private static boolean matchClass(Class mclass, Class pclass) {
+		if (mclass.isPrimitive() && !pclass.isPrimitive())
+			mclass = primitiveWrapper(mclass);
+		else if (pclass.isPrimitive() && !mclass.isPrimitive())
+			pclass = primitiveWrapper(pclass);
 		boolean assignable = mclass.isAssignableFrom(pclass);
 		if (assignable) {
 			return true;

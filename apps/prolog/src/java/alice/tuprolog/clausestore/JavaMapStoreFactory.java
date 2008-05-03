@@ -26,7 +26,10 @@ public class JavaMapStoreFactory implements ClauseStoreFactory
 					if (obj instanceof java.util.Map)
 						return new MapEntriesStore(prolog, (java.util.Map<?,?>)obj, s.getArg(1), s.getArg(2), varList, jl);					
 				}
-				catch (Exception ex) { throw new RuntimeException(ex); }				
+				catch (Exception ex) 
+				{ 
+					throw new RuntimeException(ex); 
+				}				
 			}
 		}
 		return null;

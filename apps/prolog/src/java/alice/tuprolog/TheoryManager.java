@@ -64,7 +64,7 @@ public class TheoryManager implements Serializable {
     /**
      * inserting of a clause at the head of the dbase
      */
-    void assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
+    public void assertA(Struct clause, boolean dyn, String libName, boolean backtrackable) {
         ClauseInfo d = new DefaultClauseInfo(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
@@ -80,7 +80,7 @@ public class TheoryManager implements Serializable {
     /**
      * inserting of a clause at the end of the dbase
      */
-    void assertZ(Struct clause, boolean dyn, String libName, boolean backtrackable) {
+    public void assertZ(Struct clause, boolean dyn, String libName, boolean backtrackable) {
         ClauseInfo d = new DefaultClauseInfo(toClause(clause), libName);
         String key = d.getHead().getPredicateIndicator();
         if (dyn) {
@@ -97,7 +97,7 @@ public class TheoryManager implements Serializable {
      * removing from dbase the first clause with head unifying with clause
      * (m if a free substitution index and t is the first free timestamp)
      */
-    ClauseInfo retract(Struct cl) {
+    public ClauseInfo retract(Struct cl) {
     	Struct clause = toClause(cl);
     	Struct struct = ((Struct) clause.getArg(0));
         LinkedList family = (LinkedList) dynamicDBase.get(struct.getPredicateIndicator());
@@ -118,7 +118,7 @@ public class TheoryManager implements Serializable {
      * removing from dbase the first clause with head unifying with clause
      * (m if a free substitution index and t is the first free timestamp)
      */
-    boolean abolish(Struct cl) {
+    public boolean abolish(Struct cl) {
     	cl = toClause(cl);
     	String key = cl.getPredicateIndicator();
         LinkedList abolished = dynamicDBase.abolish(key);
@@ -131,7 +131,7 @@ public class TheoryManager implements Serializable {
      * Returns a family of clauses with functor and arity equals
      * to the functor and arity of the term passed as a parameter
      */
-    List find(Term headt) {
+    public List find(Term headt) {
         if (headt instanceof Struct) {
         	String key = ((Struct) headt).getPredicateIndicator();
         	List list = (List) dynamicDBase.getPredicates(key);
@@ -160,7 +160,7 @@ public class TheoryManager implements Serializable {
      * @param dynamicTheory if it is true, then the clauses are marked as dynamic
      * @param libName       if it not null, then the clauses are marked to belong to the specificed library
      */
-    void consult(Theory theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
+    public void consult(Theory theory, boolean dynamicTheory, String libName) throws InvalidTheoryException {
     	startGoalStack = new Stack();
 
     	Iterator it;
