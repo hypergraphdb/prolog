@@ -229,7 +229,7 @@ public class HGPrologLibrary extends Library
 			return false;
 		else
 		{			
-			return javaLib().bindDynamicObject(id, cond, true);
+			return javaLib().bindObject(id, cond, true);
 		}
 	}
 	
