@@ -32,10 +32,15 @@ public class SolutionNavigator extends JPanel
 			SolutionNavigator nav = (SolutionNavigator)((Component)e.getSource()).getParent();
 			try
 			{
-				SolveInfo si = nav.engine.solveNext();
-				nav.solutions.add(si);
-				nav.current.setText(si.toString());
-				nav.pos++;
+				if (nav.pos < nav.solutions.size() - 1)
+					nav.current.setText(nav.solutions.get(++nav.pos).toString());
+				else
+				{
+					SolveInfo si = nav.engine.solveNext();
+					nav.solutions.add(si);
+					nav.current.setText(si.toString());
+					nav.pos++;
+				}
 			}
 			catch (NoMoreSolutionException ex)
 			{
