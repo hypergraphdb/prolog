@@ -12,10 +12,22 @@ import javax.script.SimpleBindings;
 
 import alice.tuprolog.Prolog;
 import alice.tuprolog.Theory;
+import alice.tuprolog.event.OutputEvent;
+import alice.tuprolog.event.OutputListener;
 
 public class TuScriptEngine extends AbstractScriptEngine
 {
 	private Prolog prolog = new Prolog();
+	
+	public TuScriptEngine()
+	{
+		prolog.addOutputListener(new OutputListener() {
+			public void onOutput(OutputEvent e)
+			{
+				System.out.print(e.getMsg());
+			}
+		} );
+	}
 	
 	public Bindings createBindings()
 	{

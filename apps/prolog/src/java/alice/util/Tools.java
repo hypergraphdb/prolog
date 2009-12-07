@@ -24,20 +24,35 @@ public class Tools extends Object {
      */
     public static String loadText(String fileName) throws IOException {
         //FileInputStream is=new FileInputStream(fileName);
-        try {
-            BufferedInputStream is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(fileName));
+    	InputStream is = null;
+        try 
+        {
+            is = new BufferedInputStream(ClassLoader.getSystemResourceAsStream(fileName));
             byte[] info=new byte[is.available()];
             is.read(info);
             return new String(info);
-        } catch (Exception ex){
+        } 
+        catch (Exception ex)
+        {
+        }
+        finally
+        {
+        	if (is != null) is.close();
         }
         // resource not found among system resources: try as a file
-        try {
-            FileInputStream is = new FileInputStream(fileName);
+        try 
+        {
+            is = new FileInputStream(fileName);
             byte[] info=new byte[is.available()];
             is.read(info);
             return new String(info);
-        } catch (Exception ex){
+        } 
+        catch (Exception ex)
+        {
+        }
+        finally
+        {
+        	if (is != null) is.close();
         }
         throw new IOException("File not found.");
     }

@@ -438,8 +438,16 @@ public class BuiltIn extends Library {
 	
 	public void consult_1(Term theory) throws FileNotFoundException, InvalidTheoryException, IOException {
 		theory = theory.getTerm();
-		engine.addTheory(new Theory(
-				new FileInputStream(alice.util.Tools.removeApices(theory.toString()))));
+		FileInputStream in = null;
+		try		
+		{
+			in = new FileInputStream(alice.util.Tools.removeApices(theory.toString()));
+			engine.addTheory(new Theory(in));
+		}
+		finally
+		{
+			if (in != null) in.close();
+		}
 	}
 	
 	

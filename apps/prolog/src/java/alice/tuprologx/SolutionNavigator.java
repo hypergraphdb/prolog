@@ -3,6 +3,7 @@ package alice.tuprologx;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -23,6 +24,12 @@ public class SolutionNavigator extends JPanel
 	private transient int pos = -1;
 	private transient ArrayList<SolveInfo> solutions = new ArrayList<SolveInfo>();
 	private transient Prolog engine;
+	
+	private static class SerializableLayout extends SpringLayout implements Serializable
+	{
+		private static final long serialVersionUID = 3665386053407740810L;
+		
+	}
 	
 	private static class NextAction implements ActionListener 
 	{
@@ -79,7 +86,7 @@ public class SolutionNavigator extends JPanel
 		this.add(current);
 		this.add(btnNext);
 		this.add(btnPrev);
-		SpringLayout layout = new SpringLayout();
+		SpringLayout layout = new SerializableLayout();
 		this.setLayout(layout);
 		layout.putConstraint(SpringLayout.WEST, btnNext, 10, SpringLayout.EAST, btnPrev);
 		layout.putConstraint(SpringLayout.NORTH, current, 10, SpringLayout.SOUTH, btnPrev);
