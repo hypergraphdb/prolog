@@ -1,6 +1,9 @@
 package alice.tuprologx;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serializable;
@@ -25,11 +28,11 @@ public class SolutionNavigator extends JPanel
 	private transient ArrayList<SolveInfo> solutions = new ArrayList<SolveInfo>();
 	private transient Prolog engine;
 	
-	private static class SerializableLayout extends SpringLayout implements Serializable
-	{
-		private static final long serialVersionUID = 3665386053407740810L;
-		
-	}
+//	private static class SerializableLayout extends SpringLayout implements Serializable
+//	{
+//		private static final long serialVersionUID = 3665386053407740810L;
+//		
+//	}
 	
 	private static class NextAction implements ActionListener 
 	{
@@ -78,17 +81,81 @@ public class SolutionNavigator extends JPanel
 		this.engine = engine;
 		solutions.add(solution);
 		pos = 0;
-		current = new JLabel(solution.toString());
-		btnNext = new JButton("Next Solution");
-		btnNext.addActionListener(new NextAction());
-		btnPrev = new JButton("Prev Solution");
-		btnPrev.addActionListener(new PrevAction());
-		this.add(current);
-		this.add(btnNext);
-		this.add(btnPrev);
-		SpringLayout layout = new SerializableLayout();
-		this.setLayout(layout);
-		layout.putConstraint(SpringLayout.WEST, btnNext, 10, SpringLayout.EAST, btnPrev);
-		layout.putConstraint(SpringLayout.NORTH, current, 10, SpringLayout.SOUTH, btnPrev);
+//		current = new JLabel(solution.toString());
+//		btnNext = new JButton("Next Solution");
+//		btnNext.addActionListener(new NextAction());
+//		btnPrev = new JButton("Prev Solution");
+//		btnPrev.addActionListener(new PrevAction());
+//		this.add(current);
+//		this.add(btnNext);
+//		this.add(btnPrev);
+//		SpringLayout layout = new SerializableLayout();
+//		this.setLayout(layout);
+//		layout.putConstraint(SpringLayout.WEST, btnNext, 10, SpringLayout.EAST, btnPrev);
+//		layout.putConstraint(SpringLayout.NORTH, current, 10, SpringLayout.SOUTH, btnPrev);
+		initComponents(solution.toString());
 	}
+	
+	private void initComponents(String label_text)
+	{
+        btnPrev = new JButton("Prev Solution");
+        btnNext = new JButton("Next Solution");
+        current = new  JLabel(label_text);
+
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(2, 2, 0, 0);
+        add(btnPrev, gbc);
+
+        gbc = new java.awt.GridBagConstraints();
+        gbc.anchor = java.awt.GridBagConstraints.NORTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(2, 0, 0, 2);
+        add(btnNext, gbc);
+
+        gbc = new GridBagConstraints();
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.fill =  GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(10, 2, 5, 0);
+        add(current, gbc);
+    }
+
+    public JLabel getCurrent()
+    {
+        return current;
+    }
+
+    public void setCurrent(JLabel current)
+    {
+        this.current = current;
+    }
+
+    public JButton getBtnNext()
+    {
+        return btnNext;
+    }
+
+    public void setBtnNext(JButton btnNext)
+    {
+        this.btnNext = btnNext;
+    }
+
+    public JButton getBtnPrev()
+    {
+        return btnPrev;
+    }
+
+    public void setBtnPrev(JButton btnPrev)
+    {
+        this.btnPrev = btnPrev;
+    }
 }
