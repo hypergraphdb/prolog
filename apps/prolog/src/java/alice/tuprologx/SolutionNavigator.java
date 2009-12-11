@@ -99,7 +99,9 @@ public class SolutionNavigator extends JPanel
 	private void initComponents(String label_text)
 	{
         btnPrev = new JButton("Prev Solution");
+        btnPrev.addActionListener(new PrevAction());
         btnNext = new JButton("Next Solution");
+        btnNext.addActionListener(new NextAction());
         current = new  JLabel(label_text);
 
         setLayout(new GridBagLayout());
