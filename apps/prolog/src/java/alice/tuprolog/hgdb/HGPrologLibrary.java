@@ -37,6 +37,7 @@ public class HGPrologLibrary extends Library
 		}
 		return x;
 	}
+	
 	private HGQueryCondition termToCond(Term condition) throws Exception
 	{
 		condition = condition.getTerm();
@@ -270,7 +271,7 @@ public class HGPrologLibrary extends Library
 	 * @param t
 	 * @return
 	 */
-	public boolean hg_atom(Term t)
+	public boolean hg_atom_1(Term t)
 	{
 		t = t.getTerm();
 		return t instanceof HGAtomTerm;
