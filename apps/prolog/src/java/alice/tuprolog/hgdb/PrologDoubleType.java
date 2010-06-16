@@ -1,16 +1,17 @@
 package alice.tuprolog.hgdb;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
 
 public class PrologDoubleType extends HGAtomTypeBase
 {
-	public static final HGPersistentHandle HANDLE = HGHandleFactory.makeHandle("33d5df23-8c90-4e70-ab4b-163c62947017");
+	public static final HGPersistentHandle HANDLE = 
+		UUIDHandleFactory.I.makeHandle("33d5df23-8c90-4e70-ab4b-163c62947017");
 	
 	public Object make(HGPersistentHandle handle,
 			LazyRef<HGHandle[]> targetSet, IncidenceSetRef incidenceSet)

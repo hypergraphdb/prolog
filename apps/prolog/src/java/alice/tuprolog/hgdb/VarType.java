@@ -1,10 +1,10 @@
 package alice.tuprolog.hgdb;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.IncidenceSetRef;
 import org.hypergraphdb.LazyRef;
+import org.hypergraphdb.handle.UUIDHandleFactory;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.HGAtomTypeBase;
 
@@ -13,7 +13,8 @@ import alice.tuprolog.Var;
 
 public class VarType extends HGAtomTypeBase
 {
-	public static final HGPersistentHandle HANDLE = HGHandleFactory.makeHandle("2d79f94c-7dd5-404c-a796-c52b39dc74fa");
+	public static final HGPersistentHandle HANDLE = 
+		UUIDHandleFactory.I.makeHandle("2d79f94c-7dd5-404c-a796-c52b39dc74fa");
 	
 	public Object make(HGPersistentHandle handle,
 					   LazyRef<HGHandle[]> targetSet, 

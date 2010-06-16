@@ -196,7 +196,8 @@ public class TheoryManager implements Serializable {
     /**
      * Clears the clause dbase.
      */
-    void clear() {
+    public void clear() 
+    {
     	dynamicDBase = new ClauseDatabase();
     }
 

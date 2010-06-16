@@ -1,12 +1,11 @@
 package alice.tuprolog.clausestore;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGHandleFactory;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
@@ -65,7 +64,7 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 		JavaLibrary jl = (JavaLibrary)prolog.getLibraryManager().getLibrary("alice.tuprolog.lib.JavaLibrary");		
 		for (int i = 0; i < struct.getArity(); i++)
 			if ( (atoms[i] = getTermHandle(jl, struct.getArg(i))) == null)
-				atoms[i] = HGHandleFactory.anyHandle();
+				atoms[i] = graph.getHandleFactory().anyHandle();
 			else
 				atomConditions.add(hg.incident(atoms[i]));
 		if (!atomConditions.isEmpty())
