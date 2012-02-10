@@ -1,7 +1,9 @@
 package alice.tuprolog.hgdb;
 
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.app.management.HGApplication;
+import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.type.HGAtomType;
 import org.hypergraphdb.type.TypeUtils;
 
@@ -10,7 +12,6 @@ import alice.tuprolog.Var;
 
 public class PrologHGDBApp extends HGApplication
 {
-
 	private void undefineTypes(HyperGraph graph)
 	{
 		TypeUtils.deleteInstances(graph, AtomTermType.HANDLE);
@@ -54,9 +55,24 @@ public class PrologHGDBApp extends HGApplication
 		graph.getTypeSystem().addPredefinedType(AtomTermType.HANDLE, t, alice.tuprolog.clausestore.HGAtomTerm.class);			
 	}
 	
+	private void registerIndices(HyperGraph graph)
+	{
+		HGHandle structType = graph.getTypeSystem().getTypeHandle(Struct.class);
+		graph.getIndexManager().register(new ByPartIndexer(structType, "name"));
+		graph.getIndexManager().register(new ByPartIndexer(structType, "predicateIndicator"));
+	}
+
+	private void unregisterIndices(HyperGraph graph)
+	{
+		HGHandle structType = graph.getTypeSystem().getTypeHandle(Struct.class);
+		graph.getIndexManager().unregister(new ByPartIndexer(structType, "name"));
+		graph.getIndexManager().unregister(new ByPartIndexer(structType, "predicateIndicator"));
+	}
+	
 	public void install(HyperGraph graph)
 	{
 		defineTypes(graph);
+		registerIndices(graph);
 	}
 
 	public void reset(HyperGraph graph)
@@ -65,15 +81,15 @@ public class PrologHGDBApp extends HGApplication
 		install(graph);
 	}
 
-	public void uninstall(HyperGraph graph)
+	public void uninstall(HyperGraph graph)	
 	{
+		unregisterIndices(graph);
 		undefineTypes(graph);
 	}
 
 	public void update(HyperGraph graph)
 	{
 		// TODO Auto-generated method stub
-
 	}
 	
 	public PrologHGDBApp()

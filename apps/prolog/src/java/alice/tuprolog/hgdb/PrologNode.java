@@ -12,6 +12,7 @@ import org.hypergraphdb.IncidenceSet;
 import org.hypergraphdb.handle.HGLiveHandle;
 import org.hypergraphdb.query.HGQueryCondition;
 import org.hypergraphdb.transaction.TxCacheMap;
+import org.hypergraphdb.util.WeakIdentityHashMap;
 
 import alice.tuprolog.Struct;
 import alice.tuprolog.Term;
@@ -22,11 +23,12 @@ public class PrologNode implements HyperNode
     // A separate atom cache is needed here because of the "auto-boxing" of
     // Json instances into HGValueLinks. The HGDB cache itself only keeps the
     // HGValueLink instances.
-    private TxCacheMap<Object, HGLiveHandle> atomsTx = null;
+    TxCacheMap<Object, HGLiveHandle> atomsTx = null;
 
     public PrologNode(HyperGraph graph)
     {
         this.graph = graph;
+        atomsTx = new TxCacheMap<Object, HGLiveHandle>(graph.getTransactionManager(), WeakIdentityHashMap.class, null);                
     }
     
     public <T> T get(final HGHandle handle)
@@ -45,7 +47,6 @@ public class PrologNode implements HyperNode
                         atomsTx.put(x, graph.getCache().get(handle.getPersistent()));
                     }
                 }
-                graph.getTransactionManager().commit();
                 return (T)x;
             }
         });
@@ -66,7 +67,7 @@ public class PrologNode implements HyperNode
                HGHandle [] targets = new HGHandle[s.getArity()];
                for (int i = 0; i < targets.length; i++)
                    targets[i] = add(s.getArg(i));
-               return hg.addUnique(graph, s, hg.and(hg.eq("name", s.getName()),hg.orderedLink(targets)));               
+               return hg.addUnique(graph, new HGValueLink(s, targets), hg.and(hg.eq("name", s.getName()),hg.orderedLink(targets)));               
            }
         });
     }
@@ -122,9 +123,9 @@ public class PrologNode implements HyperNode
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> findAll(HGQueryCondition condition)
+    public List findAll(HGQueryCondition condition)
     {
-        return (List<T>)graph.findAll(condition);
+        return (List)graph.findAll(condition);
     }
 
     public long count(HGQueryCondition condition)
