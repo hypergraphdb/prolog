@@ -19,7 +19,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
     SolveInfo       info;
 
     static final String incipit =
-        "tuProlog " + Prolog.getVersion() + " - DEIS,  Università di Bologna a Cesena \n"+
+        "tuProlog " + Prolog.getVersion() + " - DEIS,  Universita di Bologna a Cesena \n"+
         new java.util.Date();
        
     public CUIConsole(String[] args){

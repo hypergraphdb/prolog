@@ -1,5 +1,4 @@
-/* áÁÕôÛûÍí
-	Thinlet GUI toolkit - www.thinlet.com
+/*Thinlet GUI toolkit - www.thinlet.com
 	Copyright (C) 2002 Robert Bajzat (robert.bajzat@thinlet.com)
 	
 	This library is free software; you can redistribute it and/or

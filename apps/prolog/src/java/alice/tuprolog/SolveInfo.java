@@ -16,9 +16,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package alice.tuprolog;
+
 import java.io.*;
 import java.util.*;
-
 
 /**
  *
@@ -29,7 +29,6 @@ import java.util.*;
  * @author Alex Benini
  */
 public class SolveInfo implements Serializable  {
-	
 	/*
 	 * possible values returned by step functions
 	 * and used as eval state flags
@@ -200,7 +199,6 @@ public class SolveInfo implements Serializable  {
 		} else {
 			return "no";
 		}
-	}
-	
-	
+	}	
+
 }
