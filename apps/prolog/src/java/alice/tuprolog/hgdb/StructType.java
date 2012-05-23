@@ -100,9 +100,13 @@ public class StructType extends HGAtomTypeBase implements HGCompositeType
 					throw new UnsupportedOperationException();
 				}
 
-				public Object project(Object atomValue)
+				public Object project(Object x)
 				{
-					return ((Struct)atomValue).getName();
+					if (x instanceof HGValueLink)
+					{
+						x = ((HGValueLink)x).getValue();
+					}					
+					return ((Struct)x).getName();
 				}
 			};
 		else if ("predicateIndicator".equals(dimensionName))
@@ -128,9 +132,14 @@ public class StructType extends HGAtomTypeBase implements HGCompositeType
 					throw new UnsupportedOperationException();
 				}
 
-				public Object project(Object atomValue)
+				public Object project(Object x)
 				{
-					return ((Struct)atomValue).getPredicateIndicator();					
+					if (x instanceof HGValueLink)
+					{
+						x = ((HGValueLink)x).getValue();
+					}					
+					return ((Struct)x).getName();
+					
 				}
 			};
 		else

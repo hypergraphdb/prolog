@@ -710,7 +710,7 @@ public class Struct extends Term
 		} else if (name.equals("{}")) {
 			return ("{" + toString0_bracket() + "}");
 		} else {
-			String s = (Parser.isAtom(name) ? name : "'" + name + "'");
+			String s = (Parser.isAtom(name) ? name : "'" + name.replace("'", "''") + "'");
 			if (arity > 0) {
 				s = s + "(";
 				for (int c = 1;c < arity;c++) {

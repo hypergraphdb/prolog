@@ -3,6 +3,7 @@ package alice.tuprolog.hgdb;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGValueLink;
@@ -29,6 +30,44 @@ public class PrologNode implements HyperNode
     {
         this.graph = graph;
         atomsTx = new TxCacheMap<Object, HGLiveHandle>(graph.getTransactionManager(), WeakIdentityHashMap.class, null);                
+    }
+
+    public HyperGraph getGraph()
+    {
+    	return graph;
+    }
+
+    public HGHandle getHandle(Object x)
+    {
+    	HGHandle h = atomsTx.get(x);
+    	return h != null ? h : graph.getHandle(x);
+    }
+    /**
+     * <p>
+     * Remove the given prolog term from the database if it is not linked by any other
+     * atom. Also, if the term is {@link Struct}, release recursively all its arguments.
+     * </p>
+     */
+    public void release(final HGHandle term)
+    {
+        graph.getTransactionManager().ensureTransaction(new Callable<Object>() {
+        @SuppressWarnings("unchecked")
+        public Object call()
+        {
+        	if (hg.count(graph, hg.incident(term)) == 0)
+        	{
+            	Object x = get(term);
+            	HGLink asLink = null;
+            	if ( (x instanceof Struct) && ((Struct)x).getArity() > 0)
+            		asLink = (HGLink)graph.get(term);
+        		graph.remove(term);
+        		if (asLink != null)
+        			for (int i = 0; i < asLink.getArity(); i++)
+        				release(asLink.getTargetAt(i));
+        	}
+        	return null;
+        }
+        });
     }
     
     public <T> T get(final HGHandle handle)
@@ -67,7 +106,11 @@ public class PrologNode implements HyperNode
                HGHandle [] targets = new HGHandle[s.getArity()];
                for (int i = 0; i < targets.length; i++)
                    targets[i] = add(s.getArg(i));
-               return hg.addUnique(graph, new HGValueLink(s, targets), hg.and(hg.eq("name", s.getName()),hg.orderedLink(targets)));               
+               return hg.addUnique(graph, 
+            		   			   new HGValueLink(s, targets), 
+            		   			   hg.and(hg.type(Struct.class),
+            		   					  hg.eq("name", s.getName()),
+            		   					  hg.orderedLink(targets)));               
            }
         });
     }
@@ -104,7 +147,7 @@ public class PrologNode implements HyperNode
 
     public <T> T findOne(HGQueryCondition condition)
     {
-        return graph.findOne(condition);
+        return (T)graph.findOne(condition);
     }
 
     public <T> HGSearchResult<T> find(HGQueryCondition condition)
@@ -114,7 +157,7 @@ public class PrologNode implements HyperNode
 
     public <T> T getOne(HGQueryCondition condition)
     {
-        return graph.getOne(condition);
+        return (T)graph.getOne(condition);
     }
 
     public <T> List<T> getAll(HGQueryCondition condition)

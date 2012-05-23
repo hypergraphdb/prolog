@@ -92,6 +92,10 @@ public class PrologHGDBApp extends HGApplication
 		// TODO Auto-generated method stub
 	}
 	
+	public void extrADummyMethod() {
+	    System.out.println("blabla");
+	}
+	
 	public PrologHGDBApp()
 	{
 		setName("tuPrologApp");
