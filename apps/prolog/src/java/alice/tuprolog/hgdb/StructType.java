@@ -32,7 +32,7 @@ public class StructType extends HGAtomTypeBase implements HGCompositeType
 	{
 		HGAtomType stringType = graph.getTypeSystem().getAtomType(String.class);
 		String functor_name = (String) stringType.make(handle, null, null);
-		HGHandle[] ts = targetSet.deref();
+		HGHandle[] ts = targetSet == null ? null : targetSet.deref();
 		if (ts == null)
 			return new Struct(functor_name);
 		Term[] terms = new Term[ts.length];
