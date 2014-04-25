@@ -9,7 +9,7 @@
     <version>1.3-SNAPSHOT</version>  
   </parent>  
   <artifactId>hgdbprolog</artifactId>
-  <name>HyperGraphDB Dataflow Framework</name>
+  <name>HyperGraphDB Prolog</name>
 
  <repositories>
     <repository>
