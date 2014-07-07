@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Export-Package: alice.tuprolog.clausestore;uses:="org.hypergraphdb.ato
+ m,org.hypergraphdb.util,alice.tuprolog.lib,alice.util,org.hypergraphd
+ b,org.hypergraphdb.query,alice.tuprolog",alice.tuprolog.hgdb;uses:="a
+ lice.tuprolog.clausestore,alice.tuprolog.lib,org.hypergraphdb.query,o
+ rg.hypergraphdb.atom,org.hypergraphdb.util,org.hypergraphdb.indexing,
+ org.hypergraphdb.type,org.hypergraphdb.transaction,org.hypergraphdb.a
+ pp.management,org.hypergraphdb,alice.tuprolog,org.hypergraphdb.handle
+ ",alice.tuprolog.lib;uses:="alice.tuprolog.clausestore,org.hypergraph
+ db,alice.util,alice.tuprolog",alice.tuprolog.event;uses:="alice.tupro
+ log",alice.tuprolog;uses:="alice.tuprolog.clausestore,alice.tuprolog.
+ event,alice.util"
+Built-By: borislav
+Build-Jdk: 1.6.0_27
+Bundle-Version: 1.3.0.SNAPSHOT
+Tool: Bnd-0.0.238
+Bundle-Name: HyperGraphDB Prolog
+Bnd-LastModified: 1404705112000
+Created-By: Apache Maven Bundle Plugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.hypergraphdb-hgdbprolog;singleton:=true
+Import-Package: alice.tuprolog,alice.tuprolog.clausestore,alice.tuprol
+ og.event,alice.tuprolog.hgdb,alice.tuprolog.lib,alice.util,org.hyperg
+ raphdb,org.hypergraphdb.app.management,org.hypergraphdb.atom,org.hype
+ rgraphdb.handle,org.hypergraphdb.indexing,org.hypergraphdb.query,org.
+ hypergraphdb.transaction,org.hypergraphdb.type,org.hypergraphdb.util
+
