@@ -10,6 +10,8 @@ import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.query.*;
+import org.hypergraphdb.transaction.HGTransactionConfig;
+import org.hypergraphdb.util.HGUtils;
 
 import alice.tuprolog.ClauseStore;
 import alice.tuprolog.ClauseStoreFactory;
@@ -57,7 +59,7 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 		return h;
 	}
 	
-	private HGSearchResult<?> query(HGQueryCondition cond, Prolog prolog, Struct struct)
+	private HGQueryCondition query(HGQueryCondition cond, Prolog prolog, Struct struct)
 	{
 		HGHandle [] atoms = new HGHandle[struct.getArity()];
 		ArrayList<HGQueryCondition> atomConditions = new ArrayList<HGQueryCondition>(struct.getArity());
@@ -81,7 +83,7 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 			and.add(hg.orderedLink(atoms));
 			cond = and;
 		}
-		return graph.find(cond);
+		return cond;
 	}
 	
 	public HyperGraphStoreFactory(HyperGraph graph)
@@ -107,14 +109,29 @@ public class HyperGraphStoreFactory implements ClauseStoreFactory
 		HGQueryCondition cond = map.get(struct.getPredicateIndicator());
 		if (cond != null)
 		{
-			HGSearchResult<?>  rs = query(cond, prolog, struct);
-			if (rs == null || !rs.hasNext())
-				return null;
-			return new HyperGraphClauseStore(prolog, 
-										     graph, 
-										     struct.getName(), 
-										     struct.getArity(), 
-										     rs);
+			cond = query(cond, prolog, struct);
+			graph.getTransactionManager().beginTransaction(HGTransactionConfig.READONLY);
+			try
+			{
+				HGSearchResult<?> rs = graph.find(cond);
+				if (rs == null || !rs.hasNext())
+				{
+					try { graph.getTransactionManager().endTransaction(true); }
+					catch (Throwable t) { }
+					return null;
+				}
+				return new HyperGraphClauseStore(prolog, 
+											     graph, 
+											     struct.getName(), 
+											     struct.getArity(), 
+											     rs);
+			}
+			catch (Throwable t)
+			{				
+				try { graph.getTransactionManager().endTransaction(false); }
+				catch (Throwable ignore) { }
+				HGUtils.throwRuntimeException(t);
+			}
 		}
 		return null;
 	}

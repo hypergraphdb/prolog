@@ -25,15 +25,19 @@ public class HGPrologLibrary extends Library
 		return (JavaLibrary)getEngine().getLibraryManager().getLibrary(JavaLibrary.class.getName());
 	}
 	
-	private Object termToHGThing(Object x) throws Exception
+	private Object termToHGThing(final Object x) throws Exception
 	{
 		if (x instanceof Term)
 		{
-			x = ((Term)x).getTerm();
-			if (x instanceof Struct)
-				x = javaLib().getRegisteredDynamicObject((Struct)x);
-			else if (x instanceof HGAtomTerm)
-				x = ((HGAtomTerm)x).getHandle(); 
+			Object t = ((Term)x).getTerm();
+			if (t instanceof Struct)
+			{
+				t = javaLib().getRegisteredDynamicObject((Struct)t);
+				if (t == null)
+					return ((Struct)x).getName();
+			}
+			else if (t instanceof HGAtomTerm)
+				t = ((HGAtomTerm)x).getHandle(); 
 		}
 		return x;
 	}

@@ -36,7 +36,9 @@ public class HGAtomTerm extends Term
 	
 	public String toString()
 	{
-		return "hgatom('" + graph.getPersistentHandle(getHandle()) + "')";
+		Object x = graph.get(getHandle());
+		return x == null ? "null" : x.toString();
+		//return "hgatom('" + graph.getPersistentHandle(getHandle()) + "')";
 	}	
 	
 	public HGHandle getHandle()
